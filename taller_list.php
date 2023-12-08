@@ -1,22 +1,19 @@
+<!-- archivo.php -->
 <?php
 
-$conexion = mysqli_connect("localhost","root","","taller");
+// Conectar a la base de datos
+$conexion = mysqli_connect("localhost", "root", "", "taller");
 
-echo "** Conexion a BD taller **";
-
-if(mysqli_connect_errno()){
-
-    echo "no se conectó por un error: " . mysqli_connect_errno();    
-}else{
-    echo "se conectó de forma correcta";
+if (mysqli_connect_errno()) {
+    die("Error en la conexión a la base de datos: " . mysqli_connect_error());
 }
 
-$consulta = mysqli_query($conexion,"SELECT * FROM tallerista ");
+// Obtener datos de la tabla "tallerista"
+$consulta = mysqli_query($conexion, "SELECT * FROM tallerista");
 
-$listadoArray = mysqli_fetch_array($consulta);
-
-
-
+if (!$consulta) {
+    die("Error en la consulta: " . mysqli_error($conexion));
+}
 
 ?>
 
@@ -36,32 +33,35 @@ $listadoArray = mysqli_fetch_array($consulta);
     <table class="table">
         <thead>
         <tr>
+            <th>ID</th>
             <th>Nombre</th>
             <th>Apellido</th>
-            <th>email</th>
+            <th>Email</th>
             <th>Tema del taller</th>
-            <!-- Agregar más columnas según las necesidades -->
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
 
-        <?php
-        // Recorrer los resultados y mostrar en la tabla
-        while ($fila = mysqli_fetch_assoc($consulta)):
-            ?>
+        <?php while ($fila = mysqli_fetch_assoc($consulta)): ?>
             <tr>
-
+                <td><?php echo $fila['id']; ?></td>
                 <td><?php echo $fila['nombre']; ?></td>
                 <td><?php echo $fila['apellido']; ?></td>
                 <td><?php echo $fila['email']; ?></td>
                 <td><?php echo $fila['tema']; ?></td>
-                <!-- Agregar más celdas según las columnas en tu tabla -->
+                <td>
+                    <!-- Botón Editar -->
+                    <a href="editar.php?id=<?php echo $fila['id']; ?>" class="btn btn-primary btn-sm">Editar</a>
+                    
+                    <!-- Botón Borrar -->
+                    <a href="borrar.php?id=<?php echo $fila['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro?')">Borrar</a>
+                </td>
             </tr>
         <?php endwhile; ?>
 
         </tbody>
     </table>
-
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
